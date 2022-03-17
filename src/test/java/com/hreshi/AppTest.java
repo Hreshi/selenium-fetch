@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.io.File;
 
 public class AppTest {
     WebDriver driver;
@@ -34,25 +35,23 @@ public class AppTest {
         for (WebElement row : rows) {
             problemList.add(extractProblem(row.findElements(By.tagName("td"))));
         }
-
-        for (Problem problem : problemList) {
-            printProblem(problem);
-        }
+        driver.quit();
+        File file = Excel.make(problemList);
+        System.out.println("Excel Sheet is ready -> " + file.getPath());
     }
 
+    // call this to print a problem
     public void printProblem (Problem p) {
         System.out.println("###");
-        System.out.println(p.code);
-        System.out.println(p.name);
-        System.out.println(p.link);
-        System.out.println(p.rating);
-        System.out.println(p.solvedBy);
-        for (String str : p.tags) {
-            System.out.print(str + ",");
-        }
-        System.out.println("###");
+        System.out.print(p.code + " ");
+        System.out.println(p.name + " ");
+        System.out.println(p.link + " ");
+        System.out.println(p.rating + " ");
+        System.out.println(p.solvedBy + " ");
+        System.out.println(p.tags);
     }
 
+    // extracts problem from a <tr> element
     public Problem extractProblem (List<WebElement> td) {
         Problem problem = new Problem ();
         problem.setCode(extractCode(td.get(0)));
@@ -63,27 +62,36 @@ public class AppTest {
         problem.setSolvedBy(extractSolvedBy(td.get(4)));
         return problem;
     }
+
+    // extracts problem code from first <td> element 
     private String extractCode(WebElement td) {
         return td.getText();
     }
+
+    // extracts problem link from <a> of first <td> element
     private String extractLink(WebElement td) {
         return td.findElement(By.tagName("a")).getAttribute("href");
     }
+
+    // extracts probelm name from <a> of second <td> element
     private String extractName(WebElement td) {
         return td.findElement(By.tagName("a")).getText();
     }
-    private List<String> extractTags(WebElement td) {
-        List<String> tagList = new ArrayList<>();
-        List<WebElement> elements = td.findElements(By.tagName("a"));
-        for (int i = 1;i < elements.size();i++) {
-            tagList.add(elements.get(i).getText());
-        }
-        return tagList;
+
+    // extracts tags from <a> elements of second <td> element except above name
+    private String extractTags(WebElement td) {
+        List<WebElement> elements = td.findElements(By.tagName("div"));
+        WebElement tagElement = elements.get(1);
+        return tagElement.getText();
     }
-    private Integer extractRating(WebElement td) {
-        String rating = td.getText();
-        return new Integer(rating.equals("") ? -1 : Integer.parseInt(rating));
+
+    // extracts rating from <td>
+    private String extractRating(WebElement td) {
+        return td.getText();
     }
+
+    // extracts solvedBy from last td element
+    // returns result like " x1011". Need to fix this
     private String extractSolvedBy(WebElement td) {
         return td.getText();
     }

@@ -1,13 +1,11 @@
 package com.hreshi;
 
-import java.util.List;
-
 public class Problem {
 	String code;
 	String link;
 	String name;
-	List<String> tags;
-	Integer rating;
+	String tags;
+	String rating;
 	String solvedBy;
 
 	Problem () {
@@ -22,10 +20,10 @@ public class Problem {
 	public void setName (String name) {
 		this.name = name;
 	}
-	public void setTags (List<String> tags) {
+	public void setTags (String tags) {
 		this.tags = tags;
 	}
-	public void setRating (Integer rating) {
+	public void setRating (String rating) {
 		this.rating = rating;
 	}
 	public void setSolvedBy (String solvedBy) {
